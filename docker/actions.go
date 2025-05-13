@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/api/types/container"
 )
 
@@ -12,7 +11,7 @@ import (
 func (c *Container) Start() {
 	fmt.Printf("Start container %s...\n", c.Name)
 
-	err := dc.ContainerStart(dcCtx, c.DockerContainer.ID, types.ContainerStartOptions{})
+	err := dc.ContainerStart(dcCtx, c.DockerContainer.ID, container.StartOptions{})
 	if err != nil {
 		fmt.Println("Failed to start container: ", err)
 		os.Exit(1)
@@ -38,7 +37,7 @@ func (c *Container) Stop() {
 func (c *Container) Delete() {
 	fmt.Printf("Delete container %s...\n", c.Name)
 
-	err := dc.ContainerRemove(dcCtx, c.DockerContainer.ID, types.ContainerRemoveOptions{Force: true})
+	err := dc.ContainerRemove(dcCtx, c.DockerContainer.ID, container.RemoveOptions{Force: true})
 	if err != nil {
 		fmt.Println("Failed to delete container: ", err)
 		os.Exit(1)

@@ -180,10 +180,10 @@ func (c *Container) StartImage() {
 	}
 
 	// 启动容器
-	err = dc.ContainerStart(dcCtx, resp.ID, types.ContainerStartOptions{})
+	err = dc.ContainerStart(dcCtx, resp.ID, container.StartOptions{})
 	if err != nil {
 		fmt.Println("Failed to start container: ", err)
-		err = dc.ContainerRemove(dcCtx, resp.ID, types.ContainerRemoveOptions{Force: true})
+		err = dc.ContainerRemove(dcCtx, resp.ID, container.RemoveOptions{Force: true})
 		if err != nil {
 			lib.PrintError("Failed to kill container, please kill it manually.\n", err)
 		}

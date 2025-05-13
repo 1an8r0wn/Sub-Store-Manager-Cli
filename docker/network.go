@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/docker/docker/api/types"
+	networkType "github.com/docker/docker/api/types/network"
 	"github.com/docker/docker/client"
 )
 
@@ -13,11 +13,11 @@ var (
 	cli *client.Client
 )
 
-func (c *Container) networkIsExist() (types.NetworkResource, error) {
+func (c *Container) networkIsExist() (networkType.Inspect, error) {
 	fmt.Println("Checking network if exist...")
-	networks, err := cli.NetworkList(ctx, types.NetworkListOptions{})
+	networks, err := cli.NetworkList(ctx, networkType.ListOptions{})
 	if err != nil {
-		return types.NetworkResource{}, err
+		return networkType.Inspect{}, err
 	}
 
 	for _, network := range networks {
@@ -26,14 +26,13 @@ func (c *Container) networkIsExist() (types.NetworkResource, error) {
 		}
 	}
 
-	return types.NetworkResource{}, nil
+	return networkType.Inspect{}, nil
 }
 
 func (c *Container) createNetwork() (string, error) {
 	fmt.Println("Creating network...")
-	network, err := cli.NetworkCreate(ctx, c.Network, types.NetworkCreate{
-		CheckDuplicate: true,
-		Driver:         "bridge",
+	network, err := cli.NetworkCreate(ctx, c.Network, networkType.CreateOptions{
+		Driver: "bridge",
 	})
 	if err != nil {
 		return "", err

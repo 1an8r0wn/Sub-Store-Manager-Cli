@@ -5,13 +5,13 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/docker/docker/api/types"
+	"github.com/docker/docker/api/types/container"
 	"sub-store-manager-cli/lib"
 	"sub-store-manager-cli/vars"
 )
 
-func GetAllContainers() []types.Container {
-	containers, err := dc.ContainerList(dcCtx, types.ContainerListOptions{All: true})
+func GetAllContainers() []container.Summary {
+	containers, err := dc.ContainerList(dcCtx, container.ListOptions{All: true})
 	if err != nil {
 		lib.PrintError("Failed to list containers:", err)
 	}

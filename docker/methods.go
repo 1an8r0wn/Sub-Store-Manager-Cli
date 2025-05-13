@@ -8,7 +8,7 @@ import (
 	"path/filepath"
 
 	"github.com/Masterminds/semver/v3"
-	"github.com/docker/docker/api/types"
+	imageType "github.com/docker/docker/api/types/image"
 	"sub-store-manager-cli/lib"
 	"sub-store-manager-cli/vars"
 )
@@ -43,7 +43,7 @@ func formatDockerOutput(body io.ReadCloser) {
 
 func ImageIsExist(n string, v string) bool {
 	// 检查镜像是否存在
-	images, err := dc.ImageList(dcCtx, types.ImageListOptions{All: true})
+	images, err := dc.ImageList(dcCtx, imageType.ListOptions{All: true})
 	if err != nil {
 		lib.PrintError("Failed to list images:", err)
 	}
