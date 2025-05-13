@@ -40,7 +40,7 @@ ssm new
 
 - `--network` ：指定一个 docker network，作用等同于 `docker run` 中的 `--network`, 不指定使用 Host 模式，指定则使用 Bridge 模式，若网络存在则加入该网络，若不存在则创建该网络并加入。
 
-- `--private` ：切换容器的 HostIP 为 `127.0.0.1`, 如不指定则使用默认的 `0.0.0.0`。
+- `--private` ：默认情况下，创建一个 HostIP 为 `127.0.0.1` 的容器。如果使用 `--private=false` 则为 `0.0.0.0`。。
 
 
 ### update

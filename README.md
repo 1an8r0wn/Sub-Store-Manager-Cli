@@ -41,7 +41,7 @@ this command support the following flags:
 
 - `--network` : Specify a docker network, which has the same effect as `--network` in `docker run`. If not specified, use Host mode. If specified, use Bridge mode. If the network exists, join it; if not, create it and then join.
 
-- `--private` : Switch the HostIP of the container to `127.0.0.1`, if not specified, use the default `0.0.0.0`.
+- `--private` : The default is to create a container with a HostIP of 127.0.0.1. If --private=false is used, then it is `0.0.0.0`.
 
 ### update
 

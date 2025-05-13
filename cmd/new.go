@@ -23,7 +23,7 @@ func init() {
 	newCmd.Flags().StringVarP(&inputPort, "port", "p", "", "The port to expose")
 	newCmd.Flags().BoolVarP(&inputType, "interface", "i", false, "The target type to create a sub-store container")
 	newCmd.Flags().StringVarP(&inputNetwork, "network", "", "", "The docker network to connect")
-	newCmd.Flags().BoolVarP(&inputPrivate, "private", "", false, "Host IP is private")
+	newCmd.Flags().BoolVarP(&inputPrivate, "private", "", true, "Host IP is private")
 }
 
 func newContainer() {
