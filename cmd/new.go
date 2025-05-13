@@ -33,6 +33,7 @@ func newContainer() {
 		ContainerType: imageType,
 		Network:       inputNetwork,
 		Private:       inputPrivate,
+		Hash:          lib.CreateHash(),
 	}
 
 	// 检查是否已有同名容器
@@ -41,6 +42,12 @@ func newContainer() {
 	} else {
 		c.Name = inputName
 	}
+
+	// 根据 hash 创建镜像
+	if c.ContainerType == vars.ContainerTypeBE {
+		c.ImageName = docker.FmtImageName(c.ImageName, c.Hash)
+	}
+
 	_, isExist := docker.GetContainerByName(c.Name)
 	if isExist {
 		lib.PrintError("A container with the same name already exists.", nil)
@@ -75,7 +82,7 @@ func newContainer() {
 		lib.PrintError("The port is unavailable.", nil)
 	}
 
-	c.SetDockerfile("")
+	c.SetDockerfile()
 	c.CreateImage()
 	c.StartImage()
 }

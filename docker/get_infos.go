@@ -35,12 +35,15 @@ func GetSSMContainers() (fec []Container, bec []Container) {
 			Version:         imageNameParts[1],
 		}
 
+		image, hash := GetImageNameAndHash(ssmContainer)
+		ssmContainer.Hash = hash
+
 		// 继承原来的 private
 		if len(c.Ports) > 0 && c.Ports[0].IP == "127.0.0.1" {
 			ssmContainer.Private = true
 		}
 
-		switch imageNameParts[0] {
+		switch image {
 		case vars.DockerNameFE:
 			ssmContainer.ContainerType = vars.ContainerTypeFE
 			fec = append(fec, ssmContainer)

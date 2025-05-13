@@ -1,16 +1,25 @@
 package lib
 
 import (
-	"fmt"
-	"net"
+	"os/exec"
+	"strings"
 )
 
 // CheckPort 检查端口是否可用，可用-true 不可用-false
 func CheckPort(port string) bool {
-	listener, err := net.Listen("tcp", fmt.Sprintf(":%s", port))
+	cmd := exec.Command("docker", "ps", "--format", "{{.Ports}}")
+	output, err := cmd.Output()
 	if err != nil {
-		return false
+		return false // 命令执行失败，视为端口不可用
 	}
-	defer listener.Close()
+
+	// 检查端口是否在输出中
+	ports := strings.Split(string(output), "\n")
+	for _, p := range ports {
+		if strings.Contains(p, ":"+port+"->") {
+			return false // 端口被占用
+		}
+	}
+
 	return true
 }

@@ -50,7 +50,7 @@ func createFEImage(c *Container) {
 // CreateBEImage 创建后端镜像
 func createBEImage(c *Container) {
 	// 打开 Dockerfile 文件
-	buildDir := filepath.Join(vars.BEFileDir, c.Version)
+	buildDir := filepath.Join(vars.BEFileDir, fmt.Sprintf("%s_%s", c.Version, c.Hash))
 	tarPath := filepath.Join(vars.BEFileDir, "temp.tar")
 
 	// 下载对应版本后端程序文件
@@ -82,7 +82,7 @@ func (c *Container) CreateImage() {
 		lib.PrintError("Not provide Dockerfile, please check.", nil)
 	}
 
-	writeDockerfileToOS(c.DockerfileStr, c.ContainerType, c.Version)
+	writeDockerfileToOS(c.DockerfileStr, c.ContainerType, c.Version, c.Hash)
 	switch c.ContainerType {
 	case vars.ContainerTypeFE:
 		createFEImage(c)
@@ -165,7 +165,7 @@ func (c *Container) StartImage() {
 		configDir := filepath.Join(vars.ConfigDir, c.Name)
 		hostConfig.Binds = append(hostConfig.Binds, configDir+":/app/config")
 		hostConfig.PortBindings = nat.PortMap{
-			"3000/tcp": []nat.PortBinding{
+			"80/tcp": []nat.PortBinding{
 				{
 					HostIP:   hostIP,
 					HostPort: c.HostPort,

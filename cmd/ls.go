@@ -29,7 +29,7 @@ func listAllSSMContainer() {
 	headerFmt := color.New(color.FgGreen, color.Underline).SprintfFunc()
 	columnFmt := color.New(color.FgYellow).SprintfFunc()
 
-	tbl := table.New("Type", "ID", "Version", "Port", "Status", "Name")
+	tbl := table.New("Type", "ID", "Version", "Port", "Status", "Name", "HashPath")
 	tbl.WithHeaderFormatter(headerFmt).WithFirstColumnFormatter(columnFmt)
 
 	for _, c := range append(fel, bel...) {
@@ -43,7 +43,7 @@ func listAllSSMContainer() {
 			}
 			portStr = fmt.Sprintf("%s:%s->%s/%s", ip, p.Public, p.Private, p.Type)
 		}
-		tbl.AddRow(c.ContainerType, c.DockerContainer.ID[:24], c.Version, portStr, c.DockerContainer.State, c.Name)
+		tbl.AddRow(c.ContainerType, c.DockerContainer.ID[:24], c.Version, portStr, c.DockerContainer.State, c.Name, c.Hash)
 	}
 
 	tbl.Print()

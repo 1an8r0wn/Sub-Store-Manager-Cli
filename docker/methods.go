@@ -6,6 +6,7 @@ import (
 	"io"
 	"os"
 	"path/filepath"
+	"strings"
 
 	"github.com/Masterminds/semver/v3"
 	imageType "github.com/docker/docker/api/types/image"
@@ -59,7 +60,7 @@ func ImageIsExist(n string, v string) bool {
 	return false
 }
 
-func writeDockerfileToOS(d string, t string, v string) {
+func writeDockerfileToOS(d string, t string, v string, h string) {
 	// 检查 .ssm 目录是否存在，不存在则创建
 	appDirIsExist := lib.CheckExist(vars.AppDir)
 	if !appDirIsExist {
@@ -73,24 +74,23 @@ func writeDockerfileToOS(d string, t string, v string) {
 	}
 
 	// 检查资源文件目录是否存在，不存在则创建
-	var workDir string
+	var versionDir string
 	switch t {
 	case vars.ContainerTypeFE:
 		feFileDirIsExist := lib.CheckExist(vars.FEFileDir)
 		if !feFileDirIsExist {
 			lib.MakeDir(vars.FEFileDir)
 		}
-		workDir = vars.FEFileDir
+		versionDir = filepath.Join(vars.FEFileDir, v)
 	case vars.ContainerTypeBE:
 		beFileDirIsExist := lib.CheckExist(vars.BEFileDir)
 		if !beFileDirIsExist {
 			lib.MakeDir(vars.BEFileDir)
 		}
-		workDir = vars.BEFileDir
+		versionDir = filepath.Join(vars.BEFileDir, fmt.Sprintf("%s_%s", v, h))
 	}
 
 	// 移除旧版本目录 创建新版本目录
-	versionDir := filepath.Join(workDir, v)
 	lib.RemoveDir(versionDir)
 	lib.MakeDir(versionDir)
 
@@ -122,10 +122,10 @@ func (c *Container) SetDefaultPort() {
 	}
 }
 
-func (c *Container) SetDockerfile(flag string) {
+func (c *Container) SetDockerfile() {
 	switch c.ContainerType {
 	case vars.ContainerTypeFE:
-		c.DockerfileStr = DockerfileStr.FE
+		c.DockerfileStr = getDockerfileStr(dockerfileTypeFE, "")
 	case vars.ContainerTypeBE:
 		target, err := semver.NewVersion(c.Version)
 		if err != nil {
@@ -143,16 +143,27 @@ func (c *Container) SetDockerfile(flag string) {
 		if canUseBundle, _ := bundleRule.Validate(target); !canUseBundle {
 			lib.PrintError("The version is not supported, please use a version after 2.14.40.", nil)
 		} else if canUseEnv, _ := envRule.Validate(target); !canUseEnv {
-			c.DockerfileStr = DockerfileStr.Node
+			c.DockerfileStr = getDockerfileStr(dockerfileTypeNodeOldVersion, c.Hash)
 		} else {
-			c.DockerfileStr = DockerfileStr.NodeWithDataEnv
+			c.DockerfileStr = getDockerfileStr(dockerfileTypeNode, c.Hash)
 		}
-
-		// switch flag {
-		// case "node":
-		//     c.DockerfileStr = DockerfileStr.Node
-		// default:
-		//     lib.PrintError("Not support backend container type.", nil)
-		// }
 	}
+}
+
+func FmtImageName(name string, hash string) string {
+	return fmt.Sprintf("%s/%s", name, hash)
+}
+
+func GetImageNameAndHash(c Container) (string, string) {
+	if c.ImageName == "" {
+		return "", ""
+	}
+	splited := strings.Split(c.ImageName, "/")
+
+	if len(splited) == 2 {
+		return splited[0], splited[1]
+	} else if len(splited) == 1 {
+		return splited[0], ""
+	}
+	return "", ""
 }

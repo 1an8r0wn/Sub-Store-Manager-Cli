@@ -3,7 +3,7 @@ package docker
 import (
 	"context"
 
-	"github.com/docker/docker/api/types"
+	"github.com/docker/docker/api/types/container"
 	"github.com/docker/docker/client"
 	"sub-store-manager-cli/lib"
 )
@@ -16,12 +16,13 @@ var (
 
 type Container struct {
 	Name            string
+	Hash            string
 	ImageName       string
 	Version         string
 	HostPort        string
 	ContainerType   string
 	DockerfileStr   string
-	DockerContainer types.Container
+	DockerContainer container.Summary
 	Network         string
 	Private         bool
 }

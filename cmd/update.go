@@ -33,13 +33,15 @@ func updateContainer() {
 		lib.PrintError("The container does not exist.", nil)
 	}
 
+	_, hash := docker.GetImageNameAndHash(oldContainer)
 	c := docker.Container{
-		Name:          name,
+		Name:          oldContainer.Name,
 		ImageName:     oldContainer.ImageName,
 		ContainerType: oldContainer.ContainerType,
 		HostPort:      oldContainer.HostPort,
 		Version:       inputVersion,
 		Private:       oldContainer.Private,
+		Hash:          hash,
 	}
 
 	// 检查指定版本
@@ -71,7 +73,7 @@ func updateContainer() {
 		c.HostPort = p.Public
 	}
 
-	c.SetDockerfile("")
+	c.SetDockerfile()
 	c.CreateImage()
 
 	// 删除旧容器, 启动新容器
