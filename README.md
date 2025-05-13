@@ -41,7 +41,18 @@ this command support the following flags:
 
 - `--network` : Specify a docker network, which has the same effect as `--network` in `docker run`. If not specified, use Host mode. If specified, use Bridge mode. If the network exists, join it; if not, create it and then join.
 
-- `--private` : The default is to create a container with a HostIP of 127.0.0.1. If --private=false is used, then it is `0.0.0.0`.
+- `--private` : The default is to create a container with a HostIP of `127.0.0.1`. If `--private=false` is used, then it is `0.0.0.0`.
+
+> ⚠️ Notice
+> 
+> ### For security reasons, starting from version `0.0.12`, ssm will automatically create a random hash prefix for the backend service container to prevent scanning and leakage of subscriptions. After the creation is complete, please use the `ssm ls` command to view the hash prefix corresponding to the container interface.
+> 
+> ![ls-example](./ls_example.png)
+> 
+> As shown in the figure above, when adding a service on port 3000, use `http://localhost:3000/4424703b2bae575f0861bf07eafa` to add it to the Sub-Store backend list.
+> 
+> For containers created before version `0.0.12`, please delete the container and use the `ssm new` command to create it again to enable the random hash, and be sure to keep the original container name to maintain the old data.
+
 
 ### update
 
